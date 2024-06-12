@@ -1,8 +1,6 @@
 # Installing the EJBCA UpstreamAuthority plugin for SPIRE Server
 
-The EJBCA UpstreamAuthority plugin for SPIRE Server contained within this repository is a third party plugin built using the `[spire-plugin-sdk](https://github.com/spiffe/spire-plugin-sdk)`. Third party plugins for SPIRE must be mounted to a path on the filesystem accessible by the SPIRE server binary. This guide proposes three installation proposes two installation patterns - on the server's filesystem (no container), using a custom Dockerfile, or mounting the plugin binary as a volume in a Kubernetes deployment.
-
-> If none of the installation patterns are suitable for your environment, you can refer to the [SPIRE documentation](https://spiffe.io/docs/latest/planning/extending/) for more information on how to install third party plugins.
+The EJBCA UpstreamAuthority plugin for SPIRE Server contained within this repository is a third party plugin built using the `[spire-plugin-sdk](https://github.com/spiffe/spire-plugin-sdk)`. Third party plugins for SPIRE must be mounted to a path on the filesystem accessible by the SPIRE server binary. This guide details the general steps required to install the EJBCA UpstreamAuthority. The specific steps will vary widely depending on how/where SPIRE server is running.
 
 ## Requirements
 
@@ -101,8 +99,6 @@ If the SPIRE server will not be running in a container, the plugin binary can be
         }
     }
     ```
-
-    > The `plugin_checksum` value should match the SHA256 checksum calculated in the previous step.
 
     > For a complete list of configuration parameters and their descriptions, please refer to the [usage](usage.md) documentation.
 
