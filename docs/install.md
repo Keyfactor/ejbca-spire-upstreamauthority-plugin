@@ -1,8 +1,11 @@
 # Installing the EJBCA UpstreamAuthority plugin for SPIRE Server
 
-The EJBCA UpstreamAuthority plugin for SPIRE Server contained within this repository is a third party plugin built using the `[spire-plugin-sdk](https://github.com/spiffe/spire-plugin-sdk)`. Third party plugins for SPIRE must be mounted to a path on the filesystem accessible by the SPIRE server binary. This guide proposes two installation proposes two installation patterns.
+The EJBCA UpstreamAuthority plugin for SPIRE Server contained within this repository is a third party plugin built using the `[spire-plugin-sdk](https://github.com/spiffe/spire-plugin-sdk)`. Third party plugins for SPIRE must be mounted to a path on the filesystem accessible by the SPIRE server binary. This guide proposes three installation proposes two installation patterns - on the server's filesystem (no container), using a custom Dockerfile, or mounting the plugin binary as a volume in a Kubernetes deployment.
+
+> If none of the installation patterns are suitable for your environment, you can refer to the [SPIRE documentation](https://spiffe.io/docs/latest/planning/extending/) for more information on how to install third party plugins.
 
 ## Requirements
+
 ### To build
 
 * [Git](https://git-scm.com/)
@@ -16,9 +19,9 @@ The EJBCA UpstreamAuthority plugin for SPIRE Server contained within this reposi
 * EJBCA [Community](https://www.ejbca.org/) or EJBCA [Enterprise](https://www.keyfactor.com/products/ejbca-enterprise/)
   * The "REST Certificate Management" protocol must be enabled under System Configuration > Protocol Configuration.
 
-## Dockerfile Installation
+## Local Installation
 
-The EJBCA UpstreamAuthority plugin for SPIRE Server can be installed by creating a custom Dockerfile that uses the SPIRE Server container image as a base and copies the plugin binary to a known path. 
+If the SPIRE server will not be running in a container, the plugin binary can be built and installed on the server's filesystem.
 
 1. Build or Download the plugin binary.
     <details><summary>Build from source</summary>
@@ -36,11 +39,12 @@ The EJBCA UpstreamAuthority plugin for SPIRE Server can be installed by creating
     make build
     ```
 
-    3. Calculate the SHA256 checksum of the compiled binary - keep this value for later
+    3. Calculate the SHA256 checksum of the compiled binary
 
     ```shell
-    sha256sum ejbca-spire-upstreamauthority-plugin | cut -d ' ' -f1
+    export EJBCA_CHECKSUM=$( sha256sum bin/ejbca-spire-upstreamauthority-plugin | cut -d ' ' -f1 )
     ```
+
     </details>
 
     <details><summary>Download from GitHub</summary>
@@ -50,29 +54,58 @@ The EJBCA UpstreamAuthority plugin for SPIRE Server can be installed by creating
     ```shell
     OS=$(go env GOOS)
     ARCH=$(go env GOARCH)
-    curl -L https://github.com/Keyfactor/ejbca-vault-pki-engine/releases/latest/download/ejbca-vault-pki-engine-$OS-$ARCH.tar.gz
-    tar xzf ejbca-vault-pki-engine-$OS-$ARCH.tar.gz
+    curl -L https://github.com/Keyfactor/ejbca-spire-upstreamauthority-plugin/releases/latest/download/ejbca-spire-upstreamauthority-plugin-$OS-$ARCH.tar.gz
+    mkdir -p bin
+    tar xzf ejbca-vault-pki-engine-$OS-$ARCH.tar.gz -C bin/
     ```
+
+    > If `go` isn't installed on your system, you can access the [releases](https://github.com/Keyfactor/ejbca-spire-upstreamauthority-plugin/releases) to download the plugin binary for your platform.
 
     2. Calculate the SHA256 checksum of the compiled binary - keep this value for later
 
     ```shell
-    sha256sum ejbca-spire-upstreamauthority-plugin | cut -d ' ' -f1
+    export EJBCA_CHECKSUM=$( sha256sum bin/ejbca-spire-upstreamauthority-plugin | cut -d ' ' -f1 )
     ```
 
     </details>
 
-  1. 
+2. Copy the plugin binary to a known path on the SPIRE server filesystem
 
-3. Create a Dockerfile that copies the plugin binary to the SPIRE Server container image
-    ```Dockerfile
-    FROM ghcr.io/spiffe/spire-server:<tag>
-
-    COPY ejbca-spire-upstreamauthority-plugin /opt/spire/plugins/bin/
+    ```shell
+    sudo cp bin/ejbca-spire-upstreamauthority-plugin /opt/spire/plugins/bin/
     ```
 
-    > You can find a list of available image tags from the [SPIRE Server container registry](https://github.com/spiffe/spire/pkgs/container/spire-server).
+3. Update the SPIRE server configuration to include the plugin binary
 
-## Kubernetes Volume Mount via the SPIRE Helm Chart
+    ```shell
+    UpstreamAuthority "ejbca" {
+        plugin_cmd = "/opt/spire/plugins/bin/ejbca-spire-upstreamauthority-plugin"
+        plugin_checksum = "$EJBCA_CHECKSUM"
+            plugin_data {
+            hostname = "ejbca.example.com"
+            ca_cert = <<EOF
+    -----BEGIN CERTIFICATE-----
+    MIIDE ... mn+GJf
+    -----END CERTIFICATE-----
+    EOF
+            oauth {
+                token_url = "https://dev.idp.com/oauth/token"
+                client_id = "<client_id>"
+                client_secret = "<client_secret>"
+            }
+            ca_name = "Fake-Sub-CA"
+            end_entity_profile_name = "fakeSpireIntermediateCAEEP"
+            certificate_profile_name = "fakeSubCACP"
+            end_entity_name = ""
+            account_binding_id = "abc123"
+        }
+    }
+    ```
 
+    > The `plugin_checksum` value should match the SHA256 checksum calculated in the previous step.
 
+    > For a complete list of configuration parameters and their descriptions, please refer to the [usage](usage.md) documentation.
+
+## Using the EJBCA UpstreamAuthority plugin for SPIRE Server
+
+Refer to the [usage](usage.md) documentation for information on how to configure the EJBCA UpstreamAuthority plugin for SPIRE Server.
