@@ -24,7 +24,7 @@ import (
 )
 
 func main() {
-	plugin := new(ejbca.Plugin)
+	plugin := ejbca.New()
 	// Serve the plugin. This function call will not return. If there is a
 	// failure to serve, the process will exit with a non-zero exit code.
 	pluginmain.Serve(

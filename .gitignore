@@ -24,3 +24,5 @@ go.work.sum
 
 .data
 .build
+.idea
+
