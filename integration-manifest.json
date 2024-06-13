@@ -1,6 +1,6 @@
 {
     "$schema": "https://keyfactor.github.io/integration-manifest-schema.json",
-    "name": "EJBCA EJBCA UpstreamAuthority plugin for SPIRE Server",
+    "name": "EJBCA UpstreamAuthority plugin for SPIRE Server",
     "integration_type": "api-client",
     "status": "production",
     "description": "EJBCA UpstreamAuthority plugin for SPIFFE SPIRE using the SPIRE Plugin SDK",
