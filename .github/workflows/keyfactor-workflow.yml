@@ -32,7 +32,7 @@ jobs:
       - run: go mod download
 
       # Build Go binary
-      - run: go build -v .
+      - run: go build -v ./cmd/ejbca-spire-upstreamauthority-plugin
 
       # Run Go linters
       # https://github.com/golangci/golangci-lint-action
