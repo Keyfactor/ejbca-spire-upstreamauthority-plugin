@@ -1,28 +1,36 @@
+<h1 align="center" style="border-bottom: none">
+    EJBCA UpstreamAuthority plugin for SPIRE Server
+</h1>
 
-# EJBCA UpstreamAuthority plugin for SPIRE Server
+<p align="center">
+  <!-- Badges -->
+<img src="https://img.shields.io/badge/integration_status-production-3D1973?style=flat-square" alt="Integration Status: production" />
+<a href="https://github.com/Keyfactor/ejbca-spiffe-spire-upstreamauthority-plugin/releases"><img src="https://img.shields.io/github/v/release/Keyfactor/ejbca-spiffe-spire-upstreamauthority-plugin?style=flat-square" alt="Release" /></a>
+<img src="https://img.shields.io/github/issues/Keyfactor/ejbca-spiffe-spire-upstreamauthority-plugin?style=flat-square" alt="Issues" />
+<img src="https://img.shields.io/github/downloads/Keyfactor/ejbca-spiffe-spire-upstreamauthority-plugin/total?style=flat-square&label=downloads&color=28B905" alt="GitHub Downloads (all assets, all releases)" />
+</p>
 
-EJBCA UpstreamAuthority plugin for SPIFFE SPIRE using the SPIRE Plugin SDK
+<p align="center">
+  <!-- TOC -->
+  <a href="#support">
+    <b>Support</b>
+  </a> 
+  ·
+  <a href="#license">
+    <b>License</b>
+  </a>
+  ·
+  <a href="https://github.com/topics/keyfactor-integration">
+    <b>Related Integrations</b>
+  </a>
+</p>
 
-#### Integration status: Production - Ready for use in production environments.
+## Support
+The EJBCA UpstreamAuthority plugin for SPIRE Server is open source and there is **no SLA**. Keyfactor will address issues as resources become available. Keyfactor customers may request escalation by opening up a support ticket through their Keyfactor representative. 
 
-## About the Keyfactor API Client
-
-This API client allows for programmatic management of Keyfactor resources.
-
-## Support for EJBCA UpstreamAuthority plugin for SPIRE Server
-
-EJBCA UpstreamAuthority plugin for SPIRE Server is open source and supported on best effort level for this tool/library/client.  This means customers can report Bugs, Feature Requests, Documentation amendment or questions as well as requests for customer information required for setup that needs Keyfactor access to obtain. Such requests do not follow normal SLA commitments for response or resolution. If you have a support issue, please open a support ticket via the Keyfactor Support Portal at https://support.keyfactor.com/
-
-###### To report a problem or suggest a new feature, use the **[Issues](../../issues)** tab. If you want to contribute actual bug fixes or proposed enhancements, use the **[Pull requests](../../pulls)** tab.
-
----
+> To report a problem or suggest a new feature, use the **[Issues](../../issues)** tab. If you want to contribute actual bug fixes or proposed enhancements, use the **[Pull requests](../../pulls)** tab.
 
 
----
-
-
-
-<!--- Insert the Tool Name in the main heading! --->
 # EJBCA UpstreamAuthority plugin for SPIRE Server
 
 <!--EJBCA Community logo -->
@@ -87,3 +95,11 @@ For License information, see [LICENSE](LICENSE).
 See all [Keyfactor EJBCA GitHub projects](https://github.com/orgs/Keyfactor/repositories?q=ejbca).
 
 
+
+## License
+
+Apache License 2.0, see [LICENSE](LICENSE).
+
+## Related Integrations
+
+See all [Keyfactor integrations](https://github.com/topics/keyfactor-integration).
