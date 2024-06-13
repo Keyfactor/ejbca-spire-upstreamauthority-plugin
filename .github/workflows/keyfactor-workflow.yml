@@ -28,6 +28,23 @@ jobs:
           go-version-file: 'go.mod'
           cache: true
 
+      # Download dependencies
+      - run: go mod download
+
+      # Build Go binary
+      - run: go build -v .
+
+      # Run Go linters
+      # https://github.com/golangci/golangci-lint-action
+      - name: Run linters
+        uses: golangci/golangci-lint-action@3a919529898de77ec3da873e3063ca4b10e7f5cc # v3.7.0
+        with:
+          version: latest
+
+      # Run Go tests
+      - name: Run go test
+        run: go test -v ./...
+
   call-starter-workflow:
     uses: keyfactor/actions/.github/workflows/starter.yml@v2
     needs: test
