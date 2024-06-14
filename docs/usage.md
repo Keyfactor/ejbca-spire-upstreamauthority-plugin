@@ -15,18 +15,18 @@ The `ejbca` UpstreamAuthority plugin uses a connected [EJBCA](https://www.ejbca.
 
 The EJBCA UpstreamAuthority Plugin accepts the following configuration options.
 
-| Configuration              | Description                                                                                                                                                                                                                | Default from Environment Variables |
-|----------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------|
-| `hostname`                 | The hostname of the connected EJBCA server.                                                                                                                                                                                |                                    |
-| `ca_cert`                  | (optional) The CA certificate(s) used to validate the EJBCA server's certificate. Certificates must be in PEM format.                                                                                                      |                                    |
-| `ca_cert_path`             | (optional) The path to the CA certificate file used to validate the EJBCA server's certificate. Certificates must be in PEM format.                                                                                        | `EJBCA_CA_CERT_PATH`               |
-| `cert_auth`                | An object containing the fields described in [Client Certificate Authentication](#client-certificate-authentication). Required if Client Cert Auth is used.                                                                |                                    |
-| `oauth`                    | An object containing the fields described in [OAuth 2.0 Authentication](#oauth-20-authentication). Required if OAuth 2.0 is used.                                                                                          |                                    |
-| `ca_name`                  | The name of a CA in the connected EJBCA instance that will issue the intermediate signing certificates.                                                                                                                    |                                    |
-| `end_entity_profile_name`  | The name of an end entity profile in the connected EJBCA instance that is configured to issue SPIFFE certificates.                                                                                                         |                                    |
-| `certificate_profile_name` | The name of a certificate profile in the connected EJBCA instance that is configured to issue intermediate CA certificates.                                                                                                |                                    |
-| `end_entity_name`          | (optional) The name of the end entity, or configuration for how the EJBCA UpstreamAuthority should determine the end entity name. See [End Entity Name Customization](#ejbca-end-entity-name-customization) for more info. |                                    |
-| `account_binding_id`       | (optional) An account binding ID in EJBCA to associate with issued certificates.                                                                                                                                           |                                    |
+| Configuration              | Description                                                                                                                                                                                                                                  | Default from Environment Variables |
+|----------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------|
+| `hostname`                 | The hostname of the connected EJBCA server.                                                                                                                                                                                                  |                                    |
+| `ca_cert`                  | (optional) The CA certificate(s) used to validate the EJBCA server's certificate. Certificates must be in PEM format.                                                                                                                        |                                    |
+| `ca_cert_path`             | (optional) The path to the CA certificate file used to validate the EJBCA server's certificate. Certificates must be in PEM format.                                                                                                          | `EJBCA_CA_CERT_PATH`               |
+| `cert_auth`                | An object containing the fields described in [Client Certificate Authentication](#client-certificate-authentication). Required if Client Cert Auth is used.                                                                                  |                                    |
+| `oauth`                    | An object containing the fields described in [OAuth 2.0 Authentication](#oauth-20-authentication). Required if OAuth 2.0 is used.                                                                                                            |                                    |
+| `ca_name`                  | The name of a CA in the connected EJBCA instance that will issue the intermediate signing certificates.                                                                                                                                      |                                    |
+| `end_entity_profile_name`  | The name of an end entity profile in the connected EJBCA instance that is configured to issue SPIFFE certificates.                                                                                                                           |                                    |
+| `certificate_profile_name` | The name of a certificate profile in the connected EJBCA instance that is configured to issue intermediate CA certificates.                                                                                                                  |                                    |
+| `end_entity_name`          | (optional) The name of the end entity, or configuration for how the EJBCA UpstreamAuthority should determine the end entity name. See [End Entity Name Customization](#ejbca-end-entity-name-customization-leaf-certificates) for more info. |                                    |
+| `account_binding_id`       | (optional) An account binding ID in EJBCA to associate with issued certificates.                                                                                                                                                             |                                    |
 
 > Configuration parameters that have an override from Environment Variables will always override the provided value from the SPIRE configuration with the values in the environment. Additionally, fields that enable reading from a file (such as `ca_cert` via `ca_cert_path`) will ignore the `*_path` variable if the field is provided in the configuration.
 
@@ -41,8 +41,6 @@ The EJBCA UpstreamAuthority Plugin accepts the following configuration options.
 
 ```hcl
 UpstreamAuthority "ejbca" {
-    plugin_cmd = "/path/to/plugin_cmd"
-    plugin_checksum = "sha256 of the plugin binary"
     plugin_data {
         hostname = "ejbca.example.com"
         cert_auth {
@@ -70,18 +68,16 @@ EOF
 
 ### OAuth 2.0 Authentication
 
-| Configuration   | Description                                                                | Default from Environment Variables |
-|-----------------|----------------------------------------------------------------------------|------------------------------------|
-| `token_url`     | The OAuth 2.0 token URL used to obtain an access token.                    | `EJBCA_OAUTH_TOKEN_URL`            |
-| `client_id`     | The OAuth 2.0 client ID used to obtain an access token.                    | `EJBCA_OAUTH_CLIENT_ID`            |
-| `client_secret` | The OAuth 2.0 client secret used to obtain an access token.                | `EJBCA_OAUTH_CLIENT_SECRET`        |
+| Configuration   | Description                                                                           | Default from Environment Variables |
+|-----------------|---------------------------------------------------------------------------------------|------------------------------------|
+| `token_url`     | The OAuth 2.0 token URL used to obtain an access token.                               | `EJBCA_OAUTH_TOKEN_URL`            |
+| `client_id`     | The OAuth 2.0 client ID used to obtain an access token.                               | `EJBCA_OAUTH_CLIENT_ID`            |
+| `client_secret` | The OAuth 2.0 client secret used to obtain an access token.                           | `EJBCA_OAUTH_CLIENT_SECRET`        |
 | `scopes`        | (optional) A comma-separated list of OAuth 2.0 scopes used to obtain an access token. | `EJBCA_OAUTH_SCOPES`               |
 | `audience`      | (optional) The OAuth 2.0 audience used to obtain an access token.                     | `EJBCA_OAUTH_AUDIENCE`             |
 
 ```hcl
 UpstreamAuthority "ejbca" {
-    plugin_cmd = "/path/to/plugin_cmd"
-    plugin_checksum = "sha256 of the plugin binary"
     plugin_data {
         hostname = "ejbca.example.com"
         ca_cert = <<EOF
@@ -103,7 +99,7 @@ EOF
 }
 ```
 
-## EJBCA Configuration
+## EJBCA Sub CA End Entity Profile & Certificate Profile Configuration
 
 The connected EJBCA instance must have at least one Certificate Profile and at least one End Entity Profile capable of issuing SPIFFE certificates. The Certificate Profile must be of type `Sub CA`, and must be able to issue certificates with the ECDSA prime256v1 algorithm, at a minimum. The SPIRE Server configuration may require additional fields.
 
@@ -117,7 +113,7 @@ And the following Other Subject Attributes:
 
 * `Uniform Resource Identifier (URI)` [modifiable]
 
-## EJBCA End Entity Name Customization
+## EJBCA End Entity Name Customization (leaf certificates)
 
 The EJBCA UpstreamAuthority plugin allows users to determine how the End Entity Name is selected at runtime. Here are the options you can use for `end_entity_name`:
 
